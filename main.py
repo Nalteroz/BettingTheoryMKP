@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from Event import Event
+from Mask import Mask
 
 InputType = 0
 MyEvent = None
@@ -37,13 +38,9 @@ itemMaxWeight = GetInput(0)
 """
 
 MyEvent = Event()
+MyMask = Mask(5, len(MyEvent.Knapsack), len(MyEvent.Inventory))
 print(str(MyEvent))
-InitialSolution = MyEvent.GetInitialSolution()
-print("Solutions: ")
-print(InitialSolution)
-for i in range(len(MyEvent.Knapsack)):
-    print(MyEvent.SelectionWeight(InitialSolution[i]))
-
+print(MyMask.Indexes)
 
 
 
