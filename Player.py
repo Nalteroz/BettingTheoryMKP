@@ -13,7 +13,8 @@ class Player():
 
     def __init__(self, SizeOfTendings, bankroll=100.0):
         if(SizeOfTendings<=0):
-            print("Erro on instantiate player! Size of tendings has incorrect value.")
+            print("Erro on instantiate player!" +
+                  "Size of tendings has incorrect value.")
             return
         self.Bankroll = bankroll
         self.Name = randomName()

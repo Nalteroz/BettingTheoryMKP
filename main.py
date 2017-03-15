@@ -38,6 +38,12 @@ itemMaxWeight = GetInput(0)
 
 MyEvent = Event()
 print(str(MyEvent))
-print(MyEvent.GetInitialSolution())
+InitialSolution = MyEvent.GetInitialSolution()
+print("Solutions: ")
+print(InitialSolution)
+for i in range(len(MyEvent.Knapsack)):
+    print(MyEvent.SelectionWeight(InitialSolution[i]))
+
+
 
 
