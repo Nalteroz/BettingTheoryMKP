@@ -9,27 +9,25 @@ class Mask():
 	Event = None
 
 	def __init__(self, Event, Players):
+		self.Size = len(Players)
 		self.Event = Event
 		self.Indexes = [0] * self.Event.nOfDimentions
-		self.MaxIndex = self.Event.nOfItens -1
-		self.Size = len(Players)
-    	for Dimention in range(self.Event.nOfDimentions):
+		self.MaxIndex = self.Event.nOfItens - 1
+		for Dimention in range(self.Event.nOfDimentions):
 			IndexVector = []
 			for Player in Players:
-				IndexVector.append(Player.Favourites[Dimention])
-			
+				IndexVector.append(Player.Favourites[Dimention])	
 			self.Indexes[Dimention] = IndexVector
 
-
-	def Transformation(self, SolutionArray, Dimention, Index):
+	def Transformation(self, Solution, Dimention, Index):
 		ItensIndex = []
-		ItensIndex.extend(SolutionArray)        
+		ItensIndex.extend(Solution[Dimention])        
 		TempIndex = -1
 		SwapIndex = -1
 		BestIndex = -1
 		TempProfit = 0
 		TempWeight = 0
-		BestProfit = self.Event.CalculeProfit(SolutionArray)
+		BestProfit = self.Event.CalculeProfit(ItensIndex)
 		for i in range(len(ItensIndex)):
 			TempIndex = ItensIndex[i]
 			ItensIndex[i] = Index
@@ -45,23 +43,21 @@ class Mask():
 		else:
 			return None	
 		
-
 	def TryBetterSolution(self, Solution):
 		nOfDimentions = self.Event.nOfDimentions
 		BestSolution.extend(Solution)
 		BestProfits = [0] * nOfDimentions
-		BestTempSolution = []
-		TempProfit = 0
+		BestTempSolution = None
 		BestIndexes = [0] * nOfDimentions
 		
 		for Dimention in range(nOfDimentions):
 			BestProfits[Dimention] = self.Event.CalculeProfit(Solution[Dimention])
-			for Dimention in range(nOfDimentions):
-				for Index in range(self.Size):
-					BestTempSolution = self.Transformation(BestSolution[Dimention], Dimention, Index)
-					if(BestTempSolution):
-						BestSolution[Dimention] = BestTempSolution["BetterSolution"]
-						BestProfits[Dimention] = BestTempSolution["BetterProfit"]
-						BestIndex[Dimention] = Index
+		for Dimention in range(nOfDimentions):
+			for Index in range(self.Size):
+				BestTempSolution = self.Transformation(BestSolution, Dimention, self.Indexes[Dimention][Index])
+				if(BestTempSolution):
+					BestSolution[Dimention] = BestTempSolution["BetterSolution"]
+					BestProfits[Dimention] = BestTempSolution["BetterProfit"]
+					BestIndexes[Dimention] = Index
 		
 		return {"BestSolution": BestSolution, "BestIndexes": BestIndexes, "BestProfits": BestProfits}

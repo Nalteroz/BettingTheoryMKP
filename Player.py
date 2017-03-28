@@ -23,7 +23,7 @@ class Player():
 			Favorite = -1
 			for Index in range(self.Event.nOfItens):
 				self.Tendings[Dimention][Index] = random()
-				if(Predilect <0 or self.Tendings[Dimention][Index] > Tendings[Dimention][Favorite]):
+				if(Favorite <0 or self.Tendings[Dimention][Index] > Tendings[Dimention][Favorite]):
 					Favorite = Index
 			Favorites[Dimention] = Favorite
 
@@ -32,8 +32,8 @@ class Player():
 		for Dimention in range(self.Event.nOfDimentions):
 			self.Weights[Dimention] = [1] * (Mask.Size * 2)
 			for Index in range(Mask.Size):
-				self.Weights[Dimention][Index * 2] *= (1 - self.Tendings[Dimention][Mask[Index]])
-				self.Weights[Dimention][(Index * 2) + 1] *= self.Tendings[Dimention][Mask[Index]]
+				self.Weights[Dimention][Index * 2] *= (1 - self.Tendings[Dimention][Mask.Indexes[Dimention][Index]])
+				self.Weights[Dimention][(Index * 2) + 1] *= self.Tendings[Dimention][Mask.Indexes[Dimention][Index]]
 
 	def MakeBets(self, House):
 		BetsPerDimention = len(self.Weights[0])
@@ -62,7 +62,7 @@ class Player():
 
 	def NewPlayer(self):
 		return Player(self.Event)
-    
+	
 
 #player = Player(3, 51241)
 #print(player.Name)

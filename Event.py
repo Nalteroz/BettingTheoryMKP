@@ -52,7 +52,7 @@ class Event():
 		for ItemIndex in Indexes:
 			Profit += self.Inventory[ItemIndex].Profit
 		return Profit
-    
+	
 	def isSomeElseFit(self, DimentionIndex, SolutionVector):
 		for i in range(self.nOfItens):
 			if(self.CalculeWeight(SolutionVector)+self.Inventory[i].Weight <= self.Knapsack[DimentionIndex] and i not in SolutionVector):
@@ -81,13 +81,13 @@ class Event():
 					else:
 						Fit = True
 			Solution[i] = Selection
-            
+			
 		while Dimention < self.nOfDimentions:
 			SomeElseFit = self.isSomeElseFit(Dimention, Solution[Dimention])
 			if(SomeElseFit):
 				Solution[Dimention].append(SomeElseFit)
 			else: Dimention+=1
 		return Solution
-                
-            
+				
+			
 
