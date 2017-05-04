@@ -30,10 +30,14 @@ class Event():
 			self.Inventory[i] = Item(i, randint(1, MaxItenWeight), randint(0, MaxProfit))      
 
 	def __str__(self):
+		tw = 0
 		out = "Knapsack:\n"
 		out += "\t[ "
-		for i in self.Knapsack: out += str(i) + " "
-		out += "]\nInventory:\n"
+		for i in self.Knapsack: 
+			out += str(i) + " "
+			tw+=i
+		out += "]\nTotal Weight: " + str(tw)
+		out += "\nInventory:\n"
 		out += "\t[ "
 		for i in self.Inventory: out += "("+str(i.Weight)+" "+str(i.Profit)+")"
 		out += " ]"
@@ -63,7 +67,11 @@ class Event():
 	def GetInitialSolution(self):
 		Index = -1
 		Weight = 0
+		Weights = [0] * self.nOfDimentions
+		Profits = [0] * self.nOfDimentions
 		Solution = [0] * self.nOfDimentions
+		TotalWeight = 0
+		TotalProfit = 0
 		Fit = False
 		Dimention = 0
 		if(self.DebugMode): print("Getting Initial Solution:")
@@ -95,9 +103,14 @@ class Event():
 				if(self.DebugMode): print("\t\tHeFit: " + str(SomeElseFit) + ", adding")
 				Solution[Dimention].append(SomeElseFit)
 			else: Dimention+=1
+		for Dimention in range(self.nOfDimentions):
+			Weights[Dimention] = self.CalculeWeight(Solution[Dimention])
+			TotalWeight += Weights[Dimention]
+			Profits[Dimention] = self.CalculeProfit(Solution[Dimention])
+			TotalProfit += Profits[Dimention]
 		if(self.DebugMode): print("Initial Solution:")
 		if(self.DebugMode): print(Solution)
-		return Solution
+		return {"Solution": Solution, "Profits": Profits, "Weights": Weights, "TotalWeight": TotalWeight, "TotalProfit": TotalProfit}
 				
 			
 
