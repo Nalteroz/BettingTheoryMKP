@@ -64,10 +64,10 @@ class House():
 				for Index in range(MaskSize):
 					if(self.DebugMode): print("\t\t\tMask index " + str(Index))
 					if(Index == WinnerIndexes[Dimention]):
-						Award = self.Weights[Dimention][Index*2 + 1] * Player.Bets[Dimention][Index*2 + 1]
+						Award = (1.0 / self.Weights[Dimention][Index*2 + 1]) * Player.Bets[Dimention][Index*2 + 1]
 						if(self.DebugMode): print("\t\t\tHe bet : " + str(Player.Bets[Dimention][Index*2 + 1]))
 					else:
-						Award = self.Weights[Dimention][Index*2] * Player.Bets[Dimention][Index*2]
+						Award = (1.0 / self.Weights[Dimention][Index*2]) * Player.Bets[Dimention][Index*2]
 						if(self.DebugMode): print("\t\t\tHe bet : " + str(Player.Bets[Dimention][Index*2]))
 					if(Award > 0):
 						if(self.DebugMode): print("\t\t\tHe recived award: " + str(Award))

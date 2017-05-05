@@ -44,8 +44,9 @@ class Player():
 		for Dimention in range(self.Event.nOfDimentions):
 			self.Weights[Dimention] = [1] * (Mask.Size * 2)
 			for Index in range(Mask.Size):
-				self.Weights[Dimention][Index * 2] *= (1 - self.Tendings[Dimention][Mask.Indexes[Dimention][Index]])
-				self.Weights[Dimention][(Index * 2) + 1] *= self.Tendings[Dimention][Mask.Indexes[Dimention][Index]]
+				ItemIndex = Mask.Indexes[Dimention][Index]
+				self.Weights[Dimention][Index * 2] *= (1 - self.Tendings[Dimention][ItemIndex])
+				self.Weights[Dimention][(Index * 2) + 1] *= self.Tendings[Dimention][ItemIndex]
 		if(self.DebugMode): print("Weights:")
 		if(self.DebugMode): print(self.Weights)
 
@@ -62,7 +63,7 @@ class Player():
 				Bet = 0
 				if(self.DebugMode): print("\t\tMy Weight: " + str(self.Weights[Dimention][Index]))
 				if(self.DebugMode): print("\t\tHouse Weight: " + str(House.Weights[Dimention][Index]))
-				if(House.Weights[Dimention][Index] > self.Weights[Dimention][Index]):
+				if(House.Weights[Dimention][Index] >= self.Weights[Dimention][Index]):
 					if(self.DebugMode): print("\t\tHouse weight is better.")
 					p = House.MinimalBet / self.Weights[Dimention][Index]
 					if(self.DebugMode): print("\t\tP:" + str(p))

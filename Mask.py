@@ -46,7 +46,7 @@ class Mask():
 			ItensIndex[i] = TempIndex
 		if(SwapIndex > -1):
 			ItensIndex[SwapIndex] = Index
-			return {"BetterSolution": ItensIndex, "BetterProfit": BestProfit, "BetterWeight": BestWeight}
+			return {"Solution": ItensIndex, "Profit": BestProfit, "Weight": BestWeight}
 		else:
 			return None	
 		
@@ -54,14 +54,17 @@ class Mask():
 		if(self.DebugMode): print("Trying Better Solution:")
 		nOfDimentions = self.Event.nOfDimentions
 		BestSolution = []
-		BestSolution.extend(Solution)
+		MySolution = Solution["Solution"]
+		BestSolution.extend(MySolution)
 		BestProfits = [0] * nOfDimentions
+		BestWeights = [0] * nOfDimentions
 		BestTempSolution = None
 		BestIndexes = [0] * nOfDimentions
+		TotalWeight = 0
+		TotalProfit = 0
 		if(self.DebugMode): print("Initial solution:")
 		if(self.DebugMode): print(BestSolution)
-		for Dimention in range(nOfDimentions):
-			BestProfits[Dimention] = self.Event.CalculeProfit(Solution[Dimention])
+		BestProfits = Solution["Profits"]
 		if(self.DebugMode): print("Initial best profit:")
 		if(self.DebugMode): print(BestProfits)
 		if(self.DebugMode): print("Start Temptation")
@@ -75,8 +78,13 @@ class Mask():
 				if(self.DebugMode): print(BestTempSolution)
 				if(BestTempSolution):
 					if(self.DebugMode): print("\t\t\t\tSubstituing")
-					BestSolution[Dimention] = BestTempSolution["BetterSolution"]
-					BestProfits[Dimention] = BestTempSolution["BetterProfit"]
+					BestSolution[Dimention] = BestTempSolution["Solution"]
+					BestProfits[Dimention] = BestTempSolution["Profit"]
+					BestWeights[Dimention] = BestTempSolution["Weight"]
 					BestIndexes[Dimention] = Index
-		
-		return {"BestSolution": BestSolution, "BestIndexes": BestIndexes, "BestProfits": BestProfits}
+		for Dimention in range(nOfDimentions):
+			TotalWeight += BestWeights[Dimention]
+			TotalProfit += BestProfits[Dimention]
+
+
+		return {"Solution": BestSolution, "BestIndexes": BestIndexes, "Profits": BestProfits, "Weights": BestWeights, "TotalWeight": TotalWeight, "TotalProfit": TotalProfit}
