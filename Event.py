@@ -31,16 +31,18 @@ class Event():
 
 	def __str__(self):
 		tw = 0
-		out = "Knapsack:\n"
+		out = "N of Dimentions: " + str(self.nOfDimentions)
+		out += "\nN of Itens: " + str(self.nOfItens)
+		out += "\nKnapsack:\n"
 		out += "\t[ "
 		for i in self.Knapsack: 
 			out += str(i) + " "
 			tw+=i
-		out += "]\nTotal Weight: " + str(tw)
+		out += "] \nTotal Weight Suported: " + str(tw)
 		out += "\nInventory:\n"
 		out += "\t[ "
-		for i in self.Inventory: out += "("+str(i.Weight)+" "+str(i.Profit)+")"
-		out += " ]"
+		for i in self.Inventory: out += str(i)
+		out += " ]\n"
 		return out
 
 	def EventLen(self):
@@ -64,6 +66,12 @@ class Event():
 				return i
 		return None
 
+	def CheckIfIsIn(Index, Solution):
+		for i in range(len(Solution)):
+			if Index in Solution[i]:
+				return True
+		return False
+
 	def GetInitialSolution(self):
 		Index = -1
 		Weight = 0
@@ -74,42 +82,36 @@ class Event():
 		TotalProfit = 0
 		Fit = False
 		Dimention = 0
-		if(self.DebugMode): print("Getting Initial Solution:")
-		for i in range(self.nOfDimentions):
-			if(self.DebugMode): print("\rDimention " + str(i))
+
+		for Dimention in range(self.nOfDimentions):
 			Selection = []
 			Fit = False
 			while not Fit:
-				if(self.DebugMode): print("\t\tNotFitYet")
 				Weight = 0
-				while (self.Knapsack[i] - Weight) >= self.ItensMaxWeight:
-					if(self.DebugMode): print("\t\t\tGettinIndex")
-					Index = randint(0, len(self.Inventory) - 1)
-					#while Index in Solution:
-					#    Index = randint(0, len(self.Inventory) - 1)
+				while (self.Knapsack[Dimention] - Weight) >= self.ItensMaxWeight:
+					Index = randint(0, self.nOfItens - 1)
+						while CheckIfIsIn(Index, Solution):
+						    Index = randint(0, self.nOfItens - 1)
 					Selection.append(Index)
 					Weight += self.Inventory[Index].Weight
-				if(Weight > self.Knapsack[i]):
-					if(self.DebugMode): print("\t\t\tFail, pop solution")
+				if(Weight > self.Knapsack[Dimention]):
 					Selection.pop()
 				else:
 						Fit = True
-			Solution[i] = Selection
-		if(self.DebugMode): print("See if some else fit")
+			Solution[Dimention] = Selection
+
 		while Dimention < self.nOfDimentions:
-			if(self.DebugMode): print("\rDimention " + str(i))
 			SomeElseFit = self.isSomeElseFit(Dimention, Solution[Dimention])
 			if(SomeElseFit):
-				if(self.DebugMode): print("\t\tHeFit: " + str(SomeElseFit) + ", adding")
 				Solution[Dimention].append(SomeElseFit)
 			else: Dimention+=1
+
 		for Dimention in range(self.nOfDimentions):
 			Weights[Dimention] = self.CalculeWeight(Solution[Dimention])
 			TotalWeight += Weights[Dimention]
 			Profits[Dimention] = self.CalculeProfit(Solution[Dimention])
 			TotalProfit += Profits[Dimention]
-		if(self.DebugMode): print("Initial Solution:")
-		if(self.DebugMode): print(Solution)
+
 		return {"Solution": Solution, "Profits": Profits, "Weights": Weights, "TotalWeight": TotalWeight, "TotalProfit": TotalProfit}
 				
 			

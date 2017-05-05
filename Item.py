@@ -11,3 +11,6 @@ class Item():
 		self.Profit = Profit
 	def __len__(self):
 		return Weight * Value
+	def __str__(self):
+		out = "(" + str(self.Weight) + ", " + str(self.Profit) + ")"
+		return out

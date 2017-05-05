@@ -11,7 +11,6 @@ class Player():
 	Bankroll = 1000.0
 	Weights = []
 	Event = None
-	DebugMode = True
 
 	def __init__(self, Event, bankroll=1000.0):
 		self.Bankroll = bankroll
@@ -33,13 +32,34 @@ class Player():
 		out += "\nBankroll: " + str(self.Bankroll)
 		out += "\nTendings Lens: \n"
 		for i in range(len(self.Tendings)): out += " " + str(len(self.Tendings[i]))
+		out += "\nTendings: \n"
+		for i in range(len(self.Tendings)):
+			out += "Dimention " + str(i) + ": \n["
+			for j in range(len(self.Tendings[0])):
+				out += " " + str(self.Tendings[i][j]) + ","
+			out += "]\n"
+		if(self.Weights):
+			out += "\nWeights: \n"
+			for i in range(len(self.Weights)):
+				out += "Dimention " + str(i) + ": \n["
+				for j in range(len(self.Weights[0])):
+					out += " " + str(self.Weights[i][j]) + ","
+				out += "]\n"
 		out += "\nFavorites: \n"
-		for i in range(len(self.Favorites)): out += " " + str(self.Favorites[i])
-		out+= "\n"
+		out += "["
+		for i in range(len(self.Favorites)): out += str(self.Favorites[i]) + " "
+		out += "]"
+		if(self.Bets):
+			out+= "\nBets:\n"
+			for i in range(len(self.Bets)):
+				out += "["
+				for j in range(len(self.Bets[0])):
+					out += str(self.Bets[i][j]) + " "
+				out += "]"
+		out+="\n"
 		return out
 
 	def CalculeMyWeights(self, Mask):
-		if(self.DebugMode): print("Calculing weights of " + self.Name)
 		self.Weights = [0] * self.Event.nOfDimentions
 		for Dimention in range(self.Event.nOfDimentions):
 			self.Weights[Dimention] = [1] * (Mask.Size * 2)
@@ -47,34 +67,21 @@ class Player():
 				ItemIndex = Mask.Indexes[Dimention][Index]
 				self.Weights[Dimention][Index * 2] *= (1 - self.Tendings[Dimention][ItemIndex])
 				self.Weights[Dimention][(Index * 2) + 1] *= self.Tendings[Dimention][ItemIndex]
-		if(self.DebugMode): print("Weights:")
-		if(self.DebugMode): print(self.Weights)
 
 	def MakeBets(self, House):
-		if(self.DebugMode): print("Calculing Bets of " + self.Name)
 		BetsPerDimention = len(self.Weights[0])
 		self.Bets = [0] * self.Event.nOfDimentions
 		for Dimention in range(self.Event.nOfDimentions):
-			if(self.DebugMode): print("\tDimention " + str(Dimention))
-			if(self.DebugMode): print("\tBets per dimention = " + str(BetsPerDimention))
 			self.Bets[Dimention] = [0] * BetsPerDimention
 			for Index in range(BetsPerDimention):
-				if(self.DebugMode): print("\t\tIndex " + str(Index))
 				Bet = 0
-				if(self.DebugMode): print("\t\tMy Weight: " + str(self.Weights[Dimention][Index]))
-				if(self.DebugMode): print("\t\tHouse Weight: " + str(House.Weights[Dimention][Index]))
 				if(House.Weights[Dimention][Index] >= self.Weights[Dimention][Index]):
-					if(self.DebugMode): print("\t\tHouse weight is better.")
 					p = House.MinimalBet / self.Weights[Dimention][Index]
-					if(self.DebugMode): print("\t\tP:" + str(p))
 					Bet = (p * House.Weights[Dimention][Index])
-					if(self.DebugMode): print("\t\t\tBet value: " + str(Bet))
 					Bet = min(self.Bankroll, max(Bet, House.MinimalBet))
-					if(self.DebugMode): print("\t\t\tMin bet value: " + str(Bet))
 					self.Bets[Dimention][Index] = Bet
 					self.Bankroll -= Bet
 					House.RecieveBet(Bet)
-		if(self.DebugMode): print(self.Bets)
 
 	def isWinner(self, Dimention, BetIndex):
 		if(self.Bets[Dimention][BetIndex] > 0): return True
@@ -88,7 +95,6 @@ class Player():
 		self.Bankroll += Montant
 
 	def NewPlayer(self):
-		if(self.DebugMode): print(self.Name + "Will be a new player.")
 		return Player(self.Event)
 	
 

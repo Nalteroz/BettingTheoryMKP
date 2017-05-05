@@ -21,26 +21,33 @@ class Mask():
 			self.Indexes[Dimention] = IndexVector
 
 	def __str__(self):
-		out = "\tSize per dimention: " + str(self.Size)
+		out = "Mask size per dimention: " + str(self.Size) 
+		out += "\nIndexes: \n["
+		for i in range(len(self.Indexes)):
+			out += "["
+			for j in range(len(self.Indexes[0])):
+				out += str(self.Indexes[i][j]) + " "
+			out += "]"
+		out+="\n"
 		return out
 
-	def Transformation(self, Solution, Dimention, Index):
-		ItensIndex = []
-		ItensIndex.extend(Solution[Dimention])        
+	def Transformation(self, InitialSolution, Dimention, Index):
+		MySolution = InitialSolution.copy()
+		IniSolution = TempSolution['Solution']
 		TempIndex = -1
 		SwapIndex = -1
 		BestIndex = -1
 		TempProfit = 0
 		TempWeight = 0
 		BestWeight = 0
-		BestProfit = self.Event.CalculeProfit(ItensIndex)
-		for i in range(len(ItensIndex)):
-			TempIndex = ItensIndex[i]
-			ItensIndex[i] = Index
-			TempProfit = self.Event.CalculeProfit(ItensIndex)
-			TempWeight = self.Event.CalculeWeight(ItensIndex)
-			if((TempProfit > BestProfit and TempWeight <= self.Event.Knapsack[Dimention]) or (TempProfit >= BestProfit and TempWeight < BestWeight)):
-				SwapIndex = i
+
+		for idx in range(len(IniSolution[Dimention])):
+			TempIndex = IniSolution[Dimention][idx]
+			IniSolution[Dimention][idx] = Index
+			TempProfit = self.Event.CalculeProfit(IniSolution[Dimention])
+			TempWeight = self.Event.CalculeWeight(IniSolution[Dimention])
+			if((TempProfit > TempSolution['Profits'][Dimention] and TempWeight <= self.Event.Knapsack[Dimention]) or (TempProfit >= TempSolution['Profits'][Dimention] and TempWeight < TempSolution['Weights'][Dimention])):
+				SwapIndex = idx
 				BestProfit = TempProfit
 				BestWeight = TempWeight
 			ItensIndex[i] = TempIndex
@@ -51,33 +58,17 @@ class Mask():
 			return None	
 		
 	def TryBetterSolution(self, Solution):
-		if(self.DebugMode): print("Trying Better Solution:")
 		nOfDimentions = self.Event.nOfDimentions
-		BestSolution = []
-		MySolution = Solution["Solution"]
-		BestSolution.extend(MySolution)
-		BestProfits = [0] * nOfDimentions
-		BestWeights = [0] * nOfDimentions
+		BestSolution = Solution.copy()
 		BestTempSolution = None
 		BestIndexes = [0] * nOfDimentions
 		TotalWeight = 0
 		TotalProfit = 0
-		if(self.DebugMode): print("Initial solution:")
-		if(self.DebugMode): print(BestSolution)
-		BestProfits = Solution["Profits"]
-		if(self.DebugMode): print("Initial best profit:")
-		if(self.DebugMode): print(BestProfits)
-		if(self.DebugMode): print("Start Temptation")
+
 		for Dimention in range(nOfDimentions):
-			if(self.DebugMode): print("\tDimention " + str(Dimention))
-			if(self.DebugMode): print("\tThe dimention max weight is:" + str(self.Event.Knapsack[Dimention]))
 			for Index in range(self.Size):
-				if(self.DebugMode): print("\t\tIndex " + str(Index))
 				BestTempSolution = self.Transformation(BestSolution, Dimention, self.Indexes[Dimention][Index])
-				if(self.DebugMode): print("\t\t\tTemporary best solution is: ")
-				if(self.DebugMode): print(BestTempSolution)
 				if(BestTempSolution):
-					if(self.DebugMode): print("\t\t\t\tSubstituing")
 					BestSolution[Dimention] = BestTempSolution["Solution"]
 					BestProfits[Dimention] = BestTempSolution["Profit"]
 					BestWeights[Dimention] = BestTempSolution["Weight"]
