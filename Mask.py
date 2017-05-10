@@ -31,29 +31,32 @@ class Mask():
 		out+="\n"
 		return out
 
-	def Transformation(self, InitialSolution, Dimention, Index):
-		MySolution = InitialSolution.copy()
-		IniSolution = TempSolution['Solution']
+	def Transformation(self, SolutionArray, Dimention, Index):
+		TempSolution = SolutionArray
 		TempIndex = -1
 		SwapIndex = -1
 		BestIndex = -1
 		TempProfit = 0
 		TempWeight = 0
-		BestWeight = 0
+		BestWeight = self.Event.CalculeProfit(SolutionArray)
+		BestProfit = self.Event.CalculeWeight(SolutionArray)
 
-		for idx in range(len(IniSolution[Dimention])):
-			TempIndex = IniSolution[Dimention][idx]
-			IniSolution[Dimention][idx] = Index
-			TempProfit = self.Event.CalculeProfit(IniSolution[Dimention])
-			TempWeight = self.Event.CalculeWeight(IniSolution[Dimention])
-			if((TempProfit > TempSolution['Profits'][Dimention] and TempWeight <= self.Event.Knapsack[Dimention]) or (TempProfit >= TempSolution['Profits'][Dimention] and TempWeight < TempSolution['Weights'][Dimention])):
+		for idx in range(len(SolutionArray)):
+			TempIndex = TempSolution[idx]
+			TempSolution[idx] = Index
+			TempProfit = self.Event.CalculeProfit(TempSolution)
+			TempWeight = self.Event.CalculeWeight(TempSolution)
+
+			if((TempProfit > BestProfit and TempWeight <= self.Event.Knapsack[Dimention]) or
+			 (TempProfit >= BestProfit and TempWeight < BestWeight)):
 				SwapIndex = idx
 				BestProfit = TempProfit
 				BestWeight = TempWeight
-			ItensIndex[i] = TempIndex
+			TempSolution[idx] = TempIndex
+
 		if(SwapIndex > -1):
-			ItensIndex[SwapIndex] = Index
-			return {"Solution": ItensIndex, "Profit": BestProfit, "Weight": BestWeight}
+			TempSolution[SwapIndex] = Index
+			return {'Solution': TempSolution, 'Weight': BestWeight, 'Profit': BestProfit}
 		else:
 			return None	
 		
@@ -61,21 +64,24 @@ class Mask():
 		nOfDimentions = self.Event.nOfDimentions
 		BestSolution = Solution.copy()
 		BestTempSolution = None
-		BestIndexes = [0] * nOfDimentions
+		BestMaskIndexes = [-1] * nOfDimentions
 		TotalWeight = 0
 		TotalProfit = 0
 
 		for Dimention in range(nOfDimentions):
 			for Index in range(self.Size):
-				BestTempSolution = self.Transformation(BestSolution, Dimention, self.Indexes[Dimention][Index])
+				BestTempSolution = self.Transformation(BestSolution['Solution'][Dimention], Dimention, self.Indexes[Dimention][Index])
 				if(BestTempSolution):
-					BestSolution[Dimention] = BestTempSolution["Solution"]
-					BestProfits[Dimention] = BestTempSolution["Profit"]
-					BestWeights[Dimention] = BestTempSolution["Weight"]
-					BestIndexes[Dimention] = Index
+					BestSolution['Solution'][Dimention] = BestTempSolution["Solution"]
+					BestSolution['Profits'][Dimention] = BestTempSolution["Profit"]
+					BestSolution['Weights'][Dimention] = BestTempSolution["Weight"]
+					BestMaskIndexes[Dimention] = Index
 		for Dimention in range(nOfDimentions):
-			TotalWeight += BestWeights[Dimention]
-			TotalProfit += BestProfits[Dimention]
+			TotalWeight += BestSolution['Weights'][Dimention]
+			TotalProfit += BestSolution['Profits'][Dimention]
 
+		BestSolution['BestIndexes'] = BestMaskIndexes
+		BestSolution['TotalWeight'] = TotalWeight
+		BestSolution['TotalProfit'] = TotalProfit
 
-		return {"Solution": BestSolution, "BestIndexes": BestIndexes, "Profits": BestProfits, "Weights": BestWeights, "TotalWeight": TotalWeight, "TotalProfit": TotalProfit}
+		return BestSolution

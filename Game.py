@@ -34,7 +34,7 @@ class Game():
 	def __str__(self):
 		out = "Turns: " + str(self.Turns)
 		out += "\nN of Players: " + str(self.nOfPlayers)
-		out += "\nPlayers:\n"
+		out += "\nPlayers:\n\n"
 		for Player in self.Players: out += str(Player) +"\n"
 		if(self.BestSolution):
 			out +="BestSolution: \n"
@@ -50,54 +50,57 @@ class Game():
 		BestSolution = {}
 		TempSolution = {}
 		Solution = {}
+		if(self.DebugMode): print("\nInitialGame:\n")
 		if(self.DebugMode): print(str(self))
 		if(self.DebugMode):bp()
+		if(self.DebugMode): print("\nEvent:\n")
 		if(self.DebugMode): print(str(self.Event))
 		if(self.DebugMode):bp()
 		Solution = self.Event.GetInitialSolution()
-		if(self.DebugMode): print("\nGame Start:")
+		if(self.DebugMode): print("\InitialSolution:\n")
+		if(self.DebugMode): print(Solution)
+		if(self.DebugMode): print("\nGame Start:\n")
 		for Turn in range(self.Turns):
-			print("\tTurn " + str(Turn))
-			if(self.DebugMode): print("\nGenerationg mask:")
+			print("\tTurn " + str(Turn) +"\n")
 			self.GenerateMask()
-			if(self.DebugMode): print("\nMask:")
+			if(self.DebugMode): print("\nMask:\n")
 			if(self.DebugMode): print(str(self.Mask))
 			if(self.DebugMode):bp()
-			if(self.DebugMode): print("\nCalculing players weight:")
+			if(self.DebugMode): print("\nCalculing players weight:\n")
 			for Player in self.Players:
 				Player.CalculeMyWeights(self.Mask)
 				print(str(Player))
 				if(self.DebugMode):bp()
-			if(self.DebugMode): print("\nCalculing house weight:")
+			if(self.DebugMode): print("\nCalculing house weight:\n")
 			self.House.CalculeWeights(self.Players)
 			print(str(self.House))
 			if(self.DebugMode):bp()
-			if(self.DebugMode): print("\nCalculing players bets:")
+			if(self.DebugMode): print("\nCalculing players bets:\n")
 			for Player in self.Players:
 				Player.MakeBets(self.House)
-				print(str(Player))
+				print(str(Player) + "\n")
 				if(self.DebugMode):bp()
-			if(self.DebugMode): print("\nTrying better solution:")
+			if(self.DebugMode): print("\nTrying better solution:\n")
 			TempSolution = self.Mask.TryBetterSolution(Solution)
-			if(self.DebugMode): print("\nBetter solution:")
+			if(self.DebugMode): print("\nBetter solution:\n")
 			if(self.DebugMode): print(self.TempSolution)
 			if(self.DebugMode):bp()
-			if(self.DebugMode): print("\nPaying players Awards:")
+			if(self.DebugMode): print("\nPaying players Awards:\n")
 			self.House.PayAwards(self.Mask.Size, TempSolution["BestIndexes"], self.Players)
 			if(self.DebugMode):bp()
 			if(TempSolution["TotalProfit"] > Solution["TotalProfit"]):
-				if(self.DebugMode): print("\nBetter solution finded, changing solution")
+				if(self.DebugMode): print("\nBetter solution finded, changing solution.\n")
 				Solution = TempSolution
 			else:
-				if(self.DebugMode): print("\nBetter solution missed")
+				if(self.DebugMode): print("\nBetter solution missed.\n")
 				Miss +=1
 				if(self.DebugMode): print("\nMisses: " + str(Miss))
 			for Player in self.Players:
 				if(Player.isBroken()): 
-					print("\nPlayer " + Player.Name + " is broken")
+					print("\nPlayer " + Player.Name + " is broken.\n")
 					Player.NewPlayer()
 			if(Miss > self.MaxMissConvergence):
-				if(self.DebugMode): print("\nMax misses hited, breaking game")
+				if(self.DebugMode): print("\nMax misses hited, breaking game.\n")
 				break
 
 		print("\nFinal solution:")

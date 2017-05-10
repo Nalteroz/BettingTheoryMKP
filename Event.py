@@ -11,16 +11,18 @@ class Event():
 	DimentionsMaxCapacity = 0
 	Inventory = []
 	nOfItens = 0
+	ItensPickList = []
 	ItensMaxWeight = 0
 	ItensMaxProfit = 0
 	DebugMode = True
 
-	def __init__(self, FileName=None, nOfDimentions=10, MaxDimensionCapacity=100, nOfItens=30, MaxItenWeight=10, MaxProfit = 50):
+	def __init__(self, FileName=None, nOfDimentions=10, MaxDimensionCapacity=100, nOfItens=30, MaxItenWeight=10, MaxProfit = 50, Bounderie = 1):
 		if FileName is None :
 			self.Knapsack = [0] * nOfDimentions
 			self.nOfDimentions = nOfDimentions
 			self.Inventory = [0] * nOfItens
 			self.nOfItens = nOfItens
+			#self.ItensPickList = [Bounderie] * nOfItens
 			self.DimentionsMaxCapacity = MaxDimensionCapacity
 			self.ItensMaxWeight = MaxItenWeight
 			self.ItensMaxProfit = MaxProfit
@@ -64,13 +66,17 @@ class Event():
 		for i in range(self.nOfItens):
 			if(self.CalculeWeight(SolutionVector)+self.Inventory[i].Weight <= self.Knapsack[DimentionIndex] ):
 				return i
-		return None
+		return -1
 
-	def CheckIfIsIn(Index, Solution):
+	def CheckIfIsIn(self, Index, Solution):
+		print(Solution)
 		for i in range(len(Solution)):
 			if Index in Solution[i]:
 				return True
 		return False
+
+	#def RandomItem(self, Bounded):
+
 
 	def GetInitialSolution(self):
 		Index = -1
@@ -78,10 +84,12 @@ class Event():
 		Weights = [0] * self.nOfDimentions
 		Profits = [0] * self.nOfDimentions
 		Solution = [0] * self.nOfDimentions
+		for i in range(self.nOfDimentions): Solution[i] = []
 		TotalWeight = 0
 		TotalProfit = 0
 		Fit = False
 		Dimention = 0
+		ItensLeft = self.nOfItens
 
 		for Dimention in range(self.nOfDimentions):
 			Selection = []
@@ -90,8 +98,8 @@ class Event():
 				Weight = 0
 				while (self.Knapsack[Dimention] - Weight) >= self.ItensMaxWeight:
 					Index = randint(0, self.nOfItens - 1)
-						while CheckIfIsIn(Index, Solution):
-						    Index = randint(0, self.nOfItens - 1)
+					#while self.CheckIfIsIn(Index, Solution):
+						#Index = randint(0, self.nOfItens - 1)
 					Selection.append(Index)
 					Weight += self.Inventory[Index].Weight
 				if(Weight > self.Knapsack[Dimention]):
@@ -102,7 +110,7 @@ class Event():
 
 		while Dimention < self.nOfDimentions:
 			SomeElseFit = self.isSomeElseFit(Dimention, Solution[Dimention])
-			if(SomeElseFit):
+			if(SomeElseFit>=0):
 				Solution[Dimention].append(SomeElseFit)
 			else: Dimention+=1
 

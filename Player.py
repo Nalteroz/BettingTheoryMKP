@@ -12,7 +12,7 @@ class Player():
 	Weights = []
 	Event = None
 
-	def __init__(self, Event, bankroll=1000.0):
+	def __init__(self, Event, bankroll=10.0):
 		self.Bankroll = bankroll
 		self.Name = randomName()
 		self.Event = Event
@@ -32,16 +32,16 @@ class Player():
 		out += "\nBankroll: " + str(self.Bankroll)
 		out += "\nTendings Lens: \n"
 		for i in range(len(self.Tendings)): out += " " + str(len(self.Tendings[i]))
-		out += "\nTendings: \n"
+		out += "\nTendings:\n"
 		for i in range(len(self.Tendings)):
-			out += "Dimention " + str(i) + ": \n["
+			out += "Dimention " + str(i) + ": \n\t["
 			for j in range(len(self.Tendings[0])):
 				out += " " + str(self.Tendings[i][j]) + ","
 			out += "]\n"
 		if(self.Weights):
-			out += "\nWeights: \n"
+			out += "\nWeights:\n\n"
 			for i in range(len(self.Weights)):
-				out += "Dimention " + str(i) + ": \n["
+				out += "Dimention " + str(i) + ": \n\t["
 				for j in range(len(self.Weights[0])):
 					out += " " + str(self.Weights[i][j]) + ","
 				out += "]\n"
@@ -88,7 +88,8 @@ class Player():
 		return False
 
 	def isBroken(self):
-		if(self.Bankroll > 0): return False
+		if(self.Bankroll > 0): 
+			return False
 		return True
 
 	def RecieveAward(self, Montant):
