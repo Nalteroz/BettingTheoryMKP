@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 from Game import Game
-
+from Event import Event
+from FileTreater import FileTreater
 InputType = 0
 
 def GetInput(InputType=0):
@@ -13,6 +14,8 @@ def GetInput(InputType=0):
 			if(v=="s"): return True
 			if(v=="n"): return False
 			else: return bool(input("\tAnswer(s|n): "))
+		if(InputType == 2):
+			return raw_input("\t")
 	except ValueError:
 		print("This is no a valid value! Try again.")
 		return GetInput(InputType)
@@ -34,8 +37,11 @@ print("Max item weight")
 itemMaxWeight = GetInput(0)
 #print(itemMaxWeight)
 """
+'''
 Mygame = Game()
 Mygame.Play()
-
-
-
+'''
+print("Path: ")
+Path = GetInput(2)
+MyFileTreater = FileTreater(Path)
+Events = MyFileTreater.LoadEvents()

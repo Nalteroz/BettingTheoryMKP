@@ -1,16 +1,18 @@
 #!/usr/bin/python
 
 class Item():
-	Index = -1
-	Weight = 0
+	Index = 0
 	Profit = 0
+	Weight = []
 
-	def __init__(self, Index, Weight = 10, Profit = 1):
+	def __init__(self, Index, Profit, nOfConstraits):
 		self.Index = Index
-		self.Weight = Weight
 		self.Profit = Profit
-	def __len__(self):
-		return Weight * Value
+		self.Weight = [0] * nOfConstraits
+
 	def __str__(self):
-		out = "(" + str(self.Weight) + ", " + str(self.Profit) + ")"
+		out = "Item Index: " + str(self.Index) + ", Profit: " + str(self.Profit)
+		out += "\n\tWeights: ["
+		for i in range(len(self.Weight)): out+= str(self.Weight[i]) + " "
+		out += "]\n" 
 		return out

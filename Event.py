@@ -6,18 +6,23 @@ from math import fabs
 from Item import Item
 
 class Event():
-	Knapsack = []
-	nOfDimentions = 0
-	DimentionsMaxCapacity = 0
-	Inventory = []
 	nOfItens = 0
+	nOfConstraints = 0
+	Optimal = 0
 	ItensPickList = []
-	ItensMaxWeight = 0
-	ItensMaxProfit = 0
-	DebugMode = True
+	Knapsack = []
+	Inventory = []
 
-	def __init__(self, FileName=None, nOfDimentions=10, MaxDimensionCapacity=100, nOfItens=30, MaxItenWeight=10, MaxProfit = 50, Bounderie = 1):
-		if FileName is None :
+	def __init__(self, nOfItens, nOfConstraints, Optimal, Inventory, Knapsack):
+		self.nOfItens = nOfItens
+		self.nOfConstraints = nOfConstraints
+		self.Optimal = Optimal
+		self.Knapsack = Knapsack
+		self.Inventory = Inventory
+
+
+		'''
+		else:
 			self.Knapsack = [0] * nOfDimentions
 			self.nOfDimentions = nOfDimentions
 			self.Inventory = [0] * nOfItens
@@ -26,23 +31,25 @@ class Event():
 			self.DimentionsMaxCapacity = MaxDimensionCapacity
 			self.ItensMaxWeight = MaxItenWeight
 			self.ItensMaxProfit = MaxProfit
-		for i in range(nOfDimentions):
-			self.Knapsack[i] = randint(0, MaxDimensionCapacity)
-		for i in range(nOfItens):
-			self.Inventory[i] = Item(i, randint(1, MaxItenWeight), randint(0, MaxProfit))      
+			for i in range(nOfDimentions):
+				self.Knapsack[i] = randint(0, MaxDimensionCapacity)
+			for i in range(nOfItens):
+				self.Inventory[i] = Item(i, randint(1, MaxItenWeight), randint(0, MaxProfit))
+		'''
+
 
 	def __str__(self):
 		tw = 0
-		out = "N of Dimentions: " + str(self.nOfDimentions)
+		out = "N of Constraints: " + str(self.nOfDimentions)
 		out += "\nN of Itens: " + str(self.nOfItens)
 		out += "\nKnapsack:\n"
 		out += "\t[ "
-		for i in self.Knapsack: 
+		for i in self.Knapsack:
 			out += str(i) + " "
 			tw+=i
 		out += "] \nTotal Weight Suported: " + str(tw)
 		out += "\nInventory:\n"
-		out += "\t[ "
+		out += "\n "
 		for i in self.Inventory: out += str(i)
 		out += " ]\n"
 		return out
@@ -50,18 +57,18 @@ class Event():
 	def EventLen(self):
 		return {"Dimentions": self.nOfDimentions, "nOfItens": self.nOfItens}
 
-	def CalculeWeight(self, IndexesList): 
+	def CalculeWeight(self, IndexesList):
 		Weight = 0
 		for ItemIndex in IndexesList:
 			Weight += self.Inventory[ItemIndex].Weight
 		return Weight
 
-	def CalculeProfit(self, Indexes): 
+	def CalculeProfit(self, Indexes):
 		Profit = 0
 		for ItemIndex in Indexes:
 			Profit += self.Inventory[ItemIndex].Profit
 		return Profit
-	
+
 	def isSomeElseFit(self, DimentionIndex, SolutionVector):
 		for i in range(self.nOfItens):
 			if(self.CalculeWeight(SolutionVector)+self.Inventory[i].Weight <= self.Knapsack[DimentionIndex] ):
@@ -120,7 +127,8 @@ class Event():
 			Profits[Dimention] = self.CalculeProfit(Solution[Dimention])
 			TotalProfit += Profits[Dimention]
 
-		return {"Solution": Solution, "Profits": Profits, "Weights": Weights, "TotalWeight": TotalWeight, "TotalProfit": TotalProfit}
-				
-			
+		return {"Solution": Solution, "Profits": Profits,
+				"Weights": Weights, "TotalWeight": TotalWeight, "TotalProfit": TotalProfit}
+
+
 
