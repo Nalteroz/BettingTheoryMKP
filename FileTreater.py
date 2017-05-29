@@ -27,9 +27,6 @@ class FileTreater():
 
 			nOfEvents = int(FileOpen.readline())
 			Events = [0] * nOfEvents
-			
-			print("N of Events: " + str(nOfEvents))
-			bp()
 
 			for EventIndex in range(nOfEvents):
 
@@ -45,36 +42,28 @@ class FileTreater():
 				Optimal = float(LineData[2])
 				Inventory = [0] * nOfItens
 				Knapsack = [0] * nOfConstraints
-				print(nOfItens)
-				print(nOfConstraints)
-				print(Optimal)
-				bp()
 				#Recovery itens profit data
+				CurrentData = []
 				while len(CurrentData) < nOfItens:
 					CurrentLine = FileOpen.readline()
 					LineData = CurrentLine.split()
 					CurrentData.extend(LineData)
-				print(CurrentData)
-				bp()
 				#Applying itens profits
 				for index in range(nOfItens):
 					Inventory[index] = Item(index, float(CurrentData[index]), nOfConstraints)
-					print(Inventory[index])
-				CurrentData = []
-				bp()
 				#Getting itens weight per constraint
 				for Constraint in range(nOfConstraints):
-					print(Constraint)
+					CurrentData = []
 					while len(CurrentData) < nOfItens:
 						CurrentLine = FileOpen.readline()
 						LineData = CurrentLine.split()
 						CurrentData.extend(LineData)
+						print(CurrentData)
 					for index in range(nOfItens):
 						Inventory[index].Weight[Constraint] = float(CurrentData[index])
 						print(Inventory[index])
-					bp()
-					CurrentData = []
 				#Getting constraints capacity
+				CurrentData = []
 				while len(CurrentData) < nOfConstraints:
 					CurrentLine = FileOpen.readline()
 					LineData = CurrentLine.split()
@@ -84,7 +73,7 @@ class FileTreater():
 					Knapsack[Constraint] = float(CurrentData[Constraint])
 				#Creating Event
 				Events[EventIndex] = Event(nOfItens, nOfConstraints, Optimal, Inventory, Knapsack)
-
+		for event in Events: print(str(event))
 		return Events
 """Benchmark/mknap1.txt
 	def PrintOut(self, result, weightDif, end):
