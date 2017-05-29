@@ -19,6 +19,7 @@ class Event():
 		self.Optimal = Optimal
 		self.Knapsack = Knapsack
 		self.Inventory = Inventory
+		self.ItemMaxWeight = self.GetMaxWeights()
 
 
 		'''
@@ -37,6 +38,17 @@ class Event():
 				self.Inventory[i] = Item(i, randint(1, MaxItenWeight), randint(0, MaxProfit))
 		'''
 
+	def GetMaxWeights(self):
+		Weights = [0] * self.nOfConstraints
+		tIndex = 0
+		for Constraint in range(self.nOfConstraints):
+			tIndex= 0
+			for ItemIndex in range(self.nOfItens):
+				if(self.Inventory[ItemIndex].Weight[Constraint] > self.Inventory[tIndex].Weight[Constraint]):
+					Weights[Constraint] = self.Inventory[ItemIndex].Weight[Constraint]
+					tIndex = ItemIndex
+		return Weights
+
 
 	def __str__(self):
 		tw = 0
@@ -53,12 +65,16 @@ class Event():
 		out += "\n["
 		for i in self.Inventory: out += str(i)
 		out += "]\n"
+		out += "\nMax Weights:\n"
+		out += "\n["
+		for i in self.ItemMaxWeight: out += str(i) + " "
+		out += "]\n"
 		return out
 
-	def CalculeWeight(self, IndexesList, Constrait):
+	def CalculeWeight(self, IndexesList, Constraint):
 		Weight = 0
 		for ItemIndex in IndexesList:
-			Weight += self.Inventory[ItemIndex].Weight[Constrait]
+			Weight += self.Inventory[ItemIndex].Weight[Constraint]
 		return Weight
 
 	def CalculeProfit(self, IndexesList):
@@ -67,9 +83,9 @@ class Event():
 			Profit += self.Inventory[ItemIndex].Profit
 		return Profit
 
-	def isSomeElseFit(self, Constrait, SolutionVector):
+	def isSomeElseFit(self, Constraint, SolutionVector):
 		for i in range(self.nOfItens):
-			if(self.CalculeWeight(SolutionVector, Constrait)+self.Inventory[i].Weight[Constrait] <= self.Knapsack[Constrait] ):
+			if(self.CalculeWeight(SolutionVector, Constraint)+self.Inventory[i].Weight[Constraint] <= self.Knapsack[Constraint] ):
 				return i
 		return -1
 
@@ -81,7 +97,6 @@ class Event():
 
 	#def RandomItem(self, Bounded):
 
-	#Aqui!!!!!!!!!!!
 	def GetInitialSolution(self):
 		Index = -1
 		Weight = 0
@@ -89,41 +104,41 @@ class Event():
 		Profits = [0] * self.nOfConstraints
 		Solution = [0] * self.nOfConstraints
 		for i in range(self.nOfConstraints):
-			Solution[i] = []
+			Solution[i] = [0] * self.nOfItens
 		TotalWeight = 0
 		TotalProfit = 0
 		Fit = False
-		Dimention = 0
+		Constraint = 0
 		ItensLeft = self.nOfItens
 
-		for Constrait in range(self.nOfConstraints):
-			Selection = []
+		for Constraint in range(self.nOfConstraints):
+			Selection = [0] * self.nOfItens
 			Fit = False
 			while not Fit:
 				Weight = 0
-				while (self.Knapsack[Constrait] - Weight) >= self.ItensMaxWeight:
+				while (self.Knapsack[Constraint] - Weight) >= self.ItensMaxWeights[Constraint]:
 					Index = randint(0, self.nOfItens - 1)
 					#while self.CheckIfIsIn(Index, Solution):
 						#Index = randint(0, self.nOfItens - 1)
 					Selection.append(Index)
 					Weight += self.Inventory[Index].Weight
-				if(Weight > self.Knapsack[Dimention]):
+				if(Weight > self.Knapsack[Constraint]):
 					Selection.pop()
 				else:
 						Fit = True
-			Solution[Dimention] = Selection
+			Solution[Constraint] = Selection
 
-		while Dimention < self.nOfDimentions:
-			SomeElseFit = self.isSomeElseFit(Dimention, Solution[Dimention])
+		while Constraint < self.nOfConstraints:
+			SomeElseFit = self.isSomeElseFit(Constraint, Solution[Dimention])
 			if(SomeElseFit>=0):
-				Solution[Dimention].append(SomeElseFit)
-			else: Dimention+=1
+				Solution[Constraint].append(SomeElseFit)
+			else: Constraint+=1
 
-		for Dimention in range(self.nOfDimentions):
-			Weights[Dimention] = self.CalculeWeight(Solution[Dimention])
-			TotalWeight += Weights[Dimention]
-			Profits[Dimention] = self.CalculeProfit(Solution[Dimention])
-			TotalProfit += Profits[Dimention]
+		for Constraint in range(self.nOfConstraints):
+			Weights[Constraint] = self.CalculeWeight(Solution[Constraint])
+			TotalWeight += Weights[Constraint]
+			Profits[Constraint] = self.CalculeProfit(Solution[Constraint])
+			TotalProfit += Profits[Constraint]
 
 		return {"Solution": Solution, "Profits": Profits,
 				"Weights": Weights, "TotalWeight": TotalWeight, "TotalProfit": TotalProfit}
