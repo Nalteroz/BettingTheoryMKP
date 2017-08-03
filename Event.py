@@ -9,12 +9,14 @@ class Event():
 	nOfItens = 0
 	nOfConstraints = 0
 	Optimal = 0
-	ItensPickList = []
+	ItensPicked = []
 	Knapsack = []
 	Inventory = []
+	ItemMaxWeight = []
 
 	def __init__(self, nOfItens, nOfConstraints, Optimal, Inventory, Knapsack):
 		self.nOfItens = nOfItens
+		self.ItensPicked = [0] * nOfItens
 		self.nOfConstraints = nOfConstraints
 		self.Optimal = Optimal
 		self.Knapsack = Knapsack
@@ -71,15 +73,15 @@ class Event():
 		out += "]\n"
 		return out
 
-	def CalculeWeight(self, IndexesList, Constraint):
+	def CalculeWeight(self, IndexList, Constraint):
 		Weight = 0
-		for ItemIndex in IndexesList:
+		for ItemIndex in IndexList:
 			Weight += self.Inventory[ItemIndex].Weight[Constraint]
 		return Weight
 
-	def CalculeProfit(self, IndexesList):
+	def CalculeProfit(self, IndexList):
 		Profit = 0
-		for ItemIndex in IndexesList:
+		for ItemIndex in IndexList:
 			Profit += self.Inventory[ItemIndex].Profit
 		return Profit
 
@@ -95,7 +97,17 @@ class Event():
 				return True
 		return False
 
-	#def RandomItem(self, Bounded):
+	def RandIndexList(self):
+		RandomList = [-1] * self.nOfItens
+		PickList = [1] * self.nOfItens
+		CheckList = []
+		for idx in range(self.nOfItens):
+			ItemIndex = randint(0, self.nOfItens - 1)
+			RandomList[idx] = ItemIndex
+			PickList[ItemIndex] = 0
+
+
+
 
 	def GetInitialSolution(self):
 		Index = -1
@@ -109,19 +121,23 @@ class Event():
 		TotalProfit = 0
 		Fit = False
 		Constraint = 0
+		ItensPicked = [0] * self.nOfItens
 		ItensLeft = self.nOfItens
+		MaxMisses = 10
 
 		for Constraint in range(self.nOfConstraints):
 			Selection = [0] * self.nOfItens
 			Fit = False
 			while not Fit:
 				Weight = 0
-				while (self.Knapsack[Constraint] - Weight) >= self.ItensMaxWeights[Constraint]:
-					Index = randint(0, self.nOfItens - 1)
-					#while self.CheckIfIsIn(Index, Solution):
-						#Index = randint(0, self.nOfItens - 1)
-					Selection.append(Index)
-					Weight += self.Inventory[Index].Weight
+				Miss = 0
+				while (self.Knapsack[Constraint] - Weight) >= self.ItensMaxWeights[Constraint] or ItensLeft > 0:
+					if Miss < MaxMisses:
+						Index = randint(0, self.nOfItens - 1)
+						while ItensPicked[Index]:
+							Index = randint(0, self.nOfItens - 1)
+						Selection.append(Index)
+						Weight += self.Inventory[Index].Weight[Constraint]
 				if(Weight > self.Knapsack[Constraint]):
 					Selection.pop()
 				else:

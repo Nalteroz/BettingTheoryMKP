@@ -24,12 +24,10 @@ class FileTreater():
 		CurrentData = []
 
 		with open(self.FilePath, 'r') as FileOpen:
-
+			#Getting number of events in the frist line of the file
 			nOfEvents = int(FileOpen.readline())
 			Events = [0] * nOfEvents
-
 			for EventIndex in range(nOfEvents):
-
 				CurrentLine = FileOpen.readline()
 				LineData = CurrentLine.split()
 				#Ignore white lines
@@ -73,16 +71,6 @@ class FileTreater():
 					Knapsack[Constraint] = float(CurrentData[Constraint])
 				#Creating Event
 				Events[EventIndex] = Event(nOfItens, nOfConstraints, Optimal, Inventory, Knapsack)
-		for event in Events: print(str(event))
+				
 		return Events
-"""Benchmark/mknap1.txt
-	def PrintOut(self, result, weightDif, end):
-		fileOut = open(self.fileNameOut, 'a')
-		
-		if end == None:
-			fileOut.write("\n")
-			fileOut.write("Valor da solucao melhor = " + str(result) + "com diferenca de peso de : "+ str(weightDif))
-			fileOut.write("\n")
-		else:
-			fileOut.write("Proporcao de solucoes melhores : " + str(result) + " usando " + end)
-"""
+
